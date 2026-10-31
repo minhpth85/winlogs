@@ -333,6 +333,41 @@ function setWins(key, arr) {
   if (arr.some(Boolean)) data[key] = arr;
   else delete data[key];
   persist();
+  queueRemote(key);
+}
+
+/* Đồng bộ với đám mây (D1 qua /api/days) */
+const timers = {};
+function saveRemote(key) {
+  return fetch('/api/days', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ day: key, wins: winsOf(key) })
+  }).then(r => { if (!r.ok) throw new Error(r.status); });
+}
+function queueRemote(key) {
+  // Chờ 400ms sau lần gõ cuối rồi mới gửi, tránh gửi liên tục khi gõ
+  clearTimeout(timers[key]);
+  timers[key] = setTimeout(() => {
+    saveRemote(key).catch(() => setStatus('Chưa đồng bộ được. Win vẫn được giữ trên máy này.'));
+  }, 400);
+}
+async function loadRemote() {
+  try {
+    const r = await fetch('/api/days');
+    if (!r.ok) throw new Error(r.status);
+    const remote = await r.json();
+    const local = data;
+    data = { ...local, ...remote };
+    persist();
+    // Ngày chỉ có trên máy này thì đẩy lên đám mây
+    Object.keys(local).forEach(k => { if (!(k in remote)) queueRemote(k); });
+    renderToday();
+    renderHistory();
+    renderMe();
+  } catch (e) {
+    // Không có mạng hoặc lỗi server: app vẫn dùng dữ liệu trên máy
+  }
 }
 function mondayOf(d) {
   const offset = (d.getDay() + 6) % 7;
@@ -613,6 +648,7 @@ function renderAll() {
   showTab('today');
 }
 renderAll();
+loadRemote();
 </script>
 </body>
 </html>
