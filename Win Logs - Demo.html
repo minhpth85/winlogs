@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Win Logs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --page: #fbf6ee;
+  --surface: #fffaf2;
+  --ink: #231942;
+  --ink-muted: #5d5380;
+  --on-lavender: #231942;
+  --on-violet: #ffffff;
+  --on-butter: #3a2d05;
+  --on-lime: #17361a;
+  --lavender: #9b8bcf;
+  --violet: #6a58b3;
+  --butter: #f9e6a6;
+  --butter-line: #efc85a;
+  --mint: #a8dccb;
+  --lime: #b8f0a0;
+  --heading: #5a46a4;
+  --line: #e4d9c6;
+  --focus: #231942;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 24px; --space-6: 32px; --space-8: 48px;
+  --radius-sm: 8px; --radius-md: 16px; --radius-lg: 28px; --radius-pill: 999px;
+  --page-width: 600px;
+  --font: "Work Sans", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font: 400 18px/28px var(--font);
+}
+.wrap { max-width: var(--page-width); margin: 0 auto; padding: 0 var(--space-5) var(--space-8); }
+
+/* Header */
+.hero {
+  background: var(--lavender);
+  color: var(--on-lavender);
+  margin: 0 calc(-1 * var(--space-5));
+  padding: var(--space-6) var(--space-5) var(--space-5);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.wordmark { font-weight: 800; font-size: 20px; letter-spacing: -0.01em; color: #fff; }
+.hero p { margin: var(--space-2) 0 0; }
+
+/* Tabs (role=tablist) */
+.tabs {
+  display: flex; gap: var(--space-2);
+  background: var(--surface); border: 2px solid var(--line);
+  border-radius: var(--radius-pill);
+  padding: 4px; margin: var(--space-6) auto 0;
+  max-width: 420px;
+}
+.tab {
+  flex: 1; min-height: 44px; border: 0; border-radius: var(--radius-pill);
+  background: transparent; color: var(--ink);
+  font: 700 15px/1 var(--font); letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.tab[aria-selected="true"] { background: var(--ink); color: #fff; }
+.tab:focus-visible, input:focus-visible, .day:focus-visible, .icon-btn:focus-visible, .btn:focus-visible {
+  outline: 3px solid var(--focus); outline-offset: 2px;
+}
+
+main { margin-top: var(--space-6); }
+h2 { font: 700 28px/34px var(--font); letter-spacing: -0.01em; color: var(--heading); margin: var(--space-6) 0 var(--space-2); }
+h2:first-child { margin-top: 0; }
+.eyebrow { font: 600 14px/20px var(--font); letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-muted); margin: 0 0 var(--space-2); }
+.muted { color: var(--ink-muted); }
+.small { font-size: 14px; line-height: 20px; }
+
+.card {
+  background: var(--surface);
+  border: 2px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+}
+.card + .card { margin-top: var(--space-4); }
+.card.primary { background: var(--lavender); border-color: var(--lavender); color: var(--on-lavender); }
+.card.primary .slot input { background: var(--surface); }
+
+/* Buttons (Button card: pill, viết hoa) */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 48px; padding: 0 var(--space-5);
+  border: 2px solid transparent; border-radius: var(--radius-pill);
+  font: 700 15px/1 var(--font); letter-spacing: 0.08em; text-transform: uppercase;
+  cursor: pointer;
+}
+.btn.lime { background: var(--lime); color: var(--on-lime); }
+.btn.violet { background: var(--violet); color: var(--on-violet); }
+.btn.outline { background: transparent; color: var(--ink); border-color: var(--ink); }
+.btn.sm { min-height: 44px; padding: 0 var(--space-4); }
+.btn:hover { filter: brightness(1.05); }
+.btn:active { transform: translateY(1px); }
+.row { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+
+/* Hôm nay */
+.slot { display: flex; gap: var(--space-3); align-items: center; margin-top: var(--space-3); }
+.slot:first-of-type { margin-top: 0; }
+.slot-num {
+  flex: 0 0 40px; height: 40px; border-radius: 50%;
+  background: var(--butter); color: var(--on-butter);
+  border: 2px solid var(--butter-line);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 16px;
+}
+.slot input {
+  flex: 1; min-width: 0; height: 48px; padding: 0 var(--space-4);
+  border: 2px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--page); color: var(--ink);
+  font: 400 18px var(--font);
+}
+.slot input::placeholder { color: var(--ink-muted); opacity: 1; }
+.today-foot { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-5); flex-wrap: wrap; }
+.status { font-size: 14px; line-height: 20px; color: var(--on-lavender); }
+.card.primary .muted { color: var(--on-lavender); opacity: 0.8; }
+
+/* Tuần này (7 chấm) */
+.week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; text-align: center; }
+.wd { font: 600 14px/20px var(--font); color: var(--ink-muted); }
+.wdot {
+  margin: var(--space-2) auto 0; width: 100%; max-width: 36px; aspect-ratio: 1 / 1; border-radius: 50%;
+  border: 2px solid var(--line); background: transparent;
+}
+.wdot.on { background: var(--mint); border-color: var(--mint); }
+.wdot.today { border-color: var(--ink); }
+.wdot.future { opacity: 0.5; }
+.week-stat { font: 800 36px/1.08 var(--font); color: var(--heading); margin: var(--space-4) 0 0; }
+
+/* Lịch tháng */
+.cal-head { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
+.cal-title { font: 700 20px/28px var(--font); margin: 0; flex: 1; text-align: center; }
+.icon-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 2px solid var(--ink); background: transparent; color: var(--ink);
+  font: 600 18px/1 var(--font); cursor: pointer;
+}
+.icon-btn:hover { background: var(--page); }
+.grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.dow { font: 600 14px/20px var(--font); text-align: center; color: var(--ink-muted); padding-bottom: 4px; }
+.day {
+  aspect-ratio: 1 / 1; border-radius: var(--radius-sm);
+  border: 2px solid transparent; background: var(--page);
+  color: var(--ink); font: 600 16px var(--font);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; padding: 0; position: relative;
+}
+.day:hover { border-color: var(--ink-muted); }
+.day.c1 { background: var(--butter); color: var(--on-butter); }
+.day.c2 { background: var(--mint); color: #173a33; }
+.day.c3 { background: var(--lavender); color: var(--on-lavender); }
+.day.empty { visibility: hidden; cursor: default; }
+.day.future { color: var(--ink-muted); background: transparent; border-color: var(--line); }
+.day.today::after {
+  content: ""; position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);
+  width: 6px; height: 6px; border-radius: 50%; background: var(--ink);
+}
+.day.selected { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--ink); }
+.day .n { font: 600 14px/16px var(--font); margin-top: 2px; }
+.legend { display: flex; gap: var(--space-3); align-items: center; font-size: 14px; color: var(--ink-muted); margin-top: var(--space-4); flex-wrap: wrap; }
+.dot { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 4px; }
+
+/* Panel ngày */
+.day-panel { margin-top: var(--space-5); padding-top: var(--space-5); border-top: 2px solid var(--line); }
+.day-panel ol { margin: var(--space-3) 0 0; padding: 0; list-style: none; }
+.day-panel li { padding: var(--space-3) 0; border-top: 2px solid var(--line); display: flex; gap: var(--space-3); align-items: center; }
+.day-panel li:first-child { border-top: 0; }
+.day-panel li .slot-num { flex: 0 0 32px; height: 32px; font-size: 14px; }
+.day-panel li > div:last-child { min-width: 0; overflow-wrap: anywhere; }
+.day-panel input { flex: 1; min-width: 0; height: 44px; padding: 0 var(--space-3); border: 2px solid var(--line); border-radius: var(--radius-sm); background: var(--page); color: var(--ink); font: 400 18px var(--font); }
+.day-date { margin: var(--space-1) 0 0; font-weight: 600; }
+
+/* Mình */
+.praise { font: 700 22px/30px var(--font); color: var(--heading); margin: 0; }
+.quote { font: 500 18px/28px var(--font); margin: 0; }
+.evidence-item { padding: var(--space-3) 0; border-top: 2px solid var(--line); }
+.evidence-item:first-child { border-top: 0; padding-top: 0; }
+.evidence-date { font-size: 14px; color: var(--ink-muted); letter-spacing: 0.04em; }
+.evidence-text { margin-top: var(--space-1); }
+.total { font: 800 36px/1.08 var(--font); color: var(--heading); margin: 0; }
+
+.footer { margin-top: var(--space-8); text-align: center; }
+.reset-btn { background: none; border: 0; color: var(--ink-muted); font: 500 14px/20px var(--font); text-decoration: underline; cursor: pointer; padding: var(--space-2); }
+/* Màn hình nhỏ (dưới 380px): thu lề để lịch đủ chỗ */
+@media (max-width: 380px) {
+  .wrap { padding: 0 var(--space-4) var(--space-8); }
+  .hero { margin: 0 calc(-1 * var(--space-4)); padding: var(--space-6) var(--space-4) var(--space-5); }
+  .card { padding: var(--space-4); }
+  .grid, .week { gap: 4px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="wordmark">Win Logs</div>
+    <p>Daily 3 Small Wins: Nhìn lại những nỗ lực của bản thân để sống tự tin hơn.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Các mục của Win Logs">
+    <button class="tab" role="tab" id="tab-history" data-tab="history" aria-controls="panel-history" aria-selected="false" tabindex="-1">History</button>
+    <button class="tab" role="tab" id="tab-today" data-tab="today" aria-controls="panel-today" aria-selected="true">Today wins</button>
+    <button class="tab" role="tab" id="tab-me" data-tab="me" aria-controls="panel-me" aria-selected="false" tabindex="-1">Me</button>
+  </nav>
+
+  <main>
+    <!-- TAB 1: Today wins -->
+    <section id="panel-today" role="tabpanel" aria-labelledby="tab-today">
+      <p class="eyebrow" id="todayLabel"></p>
+      <h2>Hôm nay mình đã làm được điều gì?</h2>
+      <div class="card primary">
+        <div class="slot"><div class="slot-num">1</div><input id="w0" placeholder="VD: Trả lời xong một email" aria-label="Win 1" autocomplete="off"></div>
+        <div class="slot"><div class="slot-num">2</div><input id="w1" placeholder="VD: Đi bộ 10 phút" aria-label="Win 2" autocomplete="off"></div>
+        <div class="slot"><div class="slot-num">3</div><input id="w2" placeholder="VD: Uống đủ nước hôm nay" aria-label="Win 3" autocomplete="off"></div>
+        <div class="today-foot">
+          <button class="btn lime" id="saveBtn">Lưu hôm nay</button>
+          <span class="status" id="statusMsg" role="status" aria-live="polite"></span>
+        </div>
+      </div>
+      <p class="muted small" style="margin-top: var(--space-3)">Nội dung được lưu nháp tự động khi bạn gõ. Nút "Lưu hôm nay" để xác nhận bạn đã ghi xong.</p>
+    </section>
+
+    <!-- TAB 2: History -->
+    <section id="panel-history" role="tabpanel" aria-labelledby="tab-history" hidden>
+      <h2>Tuần này</h2>
+      <div class="card">
+        <div class="week" id="week"></div>
+        <p class="week-stat" id="weekStat"></p>
+        <p class="muted small" style="margin: var(--space-2) 0 0">Chỉ để nhìn lại nhịp của mình, không phải bài kiểm tra.</p>
+      </div>
+
+      <h2>Nhìn lại tháng này</h2>
+      <div class="card">
+        <div class="cal-head">
+          <button class="icon-btn" id="prevBtn" aria-label="Tháng trước">←</button>
+          <p class="cal-title" id="calTitle"></p>
+          <button class="icon-btn" id="nextBtn" aria-label="Tháng sau">→</button>
+        </div>
+        <div class="grid" id="calGrid"></div>
+        <div class="legend">
+          <span><span class="dot" style="background:var(--page);border:2px solid var(--line)"></span>Chưa ghi</span>
+          <span><span class="dot" style="background:var(--butter)"></span>1 win</span>
+          <span><span class="dot" style="background:var(--mint)"></span>2 win</span>
+          <span><span class="dot" style="background:var(--lavender)"></span>3 win</span>
+        </div>
+        <div class="day-panel" id="dayPanel"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: Me -->
+    <section id="panel-me" role="tabpanel" aria-labelledby="tab-me" hidden>
+      <h2>Mình</h2>
+      <div class="card">
+        <p class="praise" id="praise"></p>
+        <p class="muted small" style="margin: var(--space-2) 0 0" id="totalLine"></p>
+      </div>
+
+      <div class="card" style="margin-top: var(--space-4)">
+        <p class="eyebrow">Câu của hôm nay</p>
+        <p class="quote" id="quote"></p>
+        <p class="muted small" id="quoteBy" style="margin: var(--space-2) 0 0"></p>
+      </div>
+
+      <h2>Hãy nhớ lại thành quả nho nhỏ của chính mình.</h2>
+      <div class="card">
+        <div id="evidence"></div>
+        <div class="row" style="margin-top: var(--space-4)">
+          <button class="btn outline sm" id="shuffleBtn">Nhắc lại</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p class="muted small">Made by Minh Fam</p>
+  </footer>
+
+</div>
+
+<script>
+const KEY = 'winlogs.v2';
+const DOW = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
+const DOW_SHORT = ['T2','T3','T4','T5','T6','T7','CN'];
+// Câu động viên: luân phiên theo ngày, mỗi ngày một câu
+const QUOTES = [
+  { text: 'Bạn đã tự chỉ trích bản thân suốt bao năm qua và nó chẳng mang lại kết quả gì. Thử một lần tự công nhận chính mình xem điều gì sẽ xảy ra.', by: 'Louise Hay' },
+  { text: 'Hãy ghi lại những chiến thắng nhỏ. Bằng cách công nhận những thành quả nhỏ, bạn sẽ tìm thấy sức mạnh để vượt qua những thử thách lớn hơn.', by: '' },
+  { text: 'Hầu như mọi điều giá trị đều bắt đầu từ một bước nhỏ. Hãy ăn mừng những chiến thắng nhỏ, bởi đó chính là nơi động lực sinh ra.', by: 'James Clear' },
+  { text: 'Hãy nói chuyện với chính mình dịu dàng và trân trọng như cách bạn từng trò chuyện với người mà bạn hết lòng yêu quý.', by: 'Brené Brown' },
+  { text: 'Hãy tự hào vì bạn đã luôn cố gắng. Bạn đang làm hết sức mình với nguồn năng lượng và hành trang bạn có của ngày hôm nay.', by: '' }
+];
+
+const pad = n => String(n).padStart(2,'0');
+const keyOf = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const today = new Date();
+const todayKey = keyOf(today);
+
+let viewYear = today.getFullYear();
+let viewMonth = today.getMonth();
+let selectedKey = todayKey;
+let editing = false;
+let statusTimer = null;
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || null; } catch (e) { return null; }
+}
+function persist() {
+  try { localStorage.setItem(KEY, JSON.stringify(data)); } catch (e) {}
+}
+let data = load() || {};
+persist();
+
+function winsOf(key) {
+  const arr = data[key] || ['', '', ''];
+  return [arr[0] || '', arr[1] || '', arr[2] || ''];
+}
+function countOf(key) {
+  return winsOf(key).filter(Boolean).length;
+}
+function setWins(key, arr) {
+  if (arr.some(Boolean)) data[key] = arr;
+  else delete data[key];
+  persist();
+}
+function mondayOf(d) {
+  const offset = (d.getDay() + 6) % 7;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() - offset);
+}
+function weekStats() {
+  const monday = mondayOf(today);
+  const offset = (today.getDay() + 6) % 7;
+  let days = 0, wins = 0;
+  for (let i = 0; i <= offset; i++) {
+    const d = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i);
+    const c = countOf(keyOf(d));
+    if (c > 0) days++;
+    wins += c;
+  }
+  return { days, wins, passed: offset + 1 };
+}
+function totalWins() {
+  let n = 0;
+  Object.keys(data).forEach(k => { n += countOf(k); });
+  return n;
+}
+function setStatus(text) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = text;
+  clearTimeout(statusTimer);
+  if (text) statusTimer = setTimeout(() => { el.textContent = ''; }, 2500);
+}
+
+/* Tabs */
+function showTab(name) {
+  document.querySelectorAll('[role="tab"]').forEach(t => {
+    const on = t.dataset.tab === name;
+    t.setAttribute('aria-selected', on ? 'true' : 'false');
+    t.tabIndex = on ? 0 : -1;
+  });
+  document.querySelectorAll('[role="tabpanel"]').forEach(p => {
+    p.hidden = p.id !== 'panel-' + name;
+  });
+  if (name === 'history') renderHistory();
+  if (name === 'me') renderMe();
+}
+const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+tabs.forEach((t, idx) => {
+  t.addEventListener('click', () => { showTab(t.dataset.tab); t.focus(); });
+  t.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    e.preventDefault();
+    const next = e.key === 'ArrowRight' ? (idx + 1) % tabs.length : (idx - 1 + tabs.length) % tabs.length;
+    tabs[next].focus();
+    showTab(tabs[next].dataset.tab);
+  });
+});
+
+/* Tab 1: Today wins */
+function renderToday() {
+  document.getElementById('todayLabel').textContent = `${DOW[today.getDay()]}, ${pad(today.getDate())}/${pad(today.getMonth()+1)}/${today.getFullYear()}`;
+  const w = winsOf(todayKey);
+  [0,1,2].forEach(i => { document.getElementById('w'+i).value = w[i]; });
+}
+[0,1,2].forEach(i => {
+  document.getElementById('w'+i).addEventListener('input', e => {
+    const w = winsOf(todayKey);
+    w[i] = e.target.value;
+    setWins(todayKey, w);
+    renderHistory();
+  });
+});
+document.getElementById('saveBtn').addEventListener('click', () => {
+  const w = winsOf(todayKey);
+  if (!w.some(Boolean)) {
+    setStatus('Ghi ít nhất một việc nhỏ trước nhé.');
+    return;
+  }
+  setWins(todayKey, w);
+  setStatus('✓ Đã ghi xong hôm nay');
+});
+
+/* Tab 2: History */
+function renderWeek() {
+  const monday = mondayOf(today);
+  const todayOffset = (today.getDay() + 6) % 7;
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday.getFullYear(), monday.getMonth(), monday.getDate() + i);
+    const key = keyOf(d);
+    const c = countOf(key);
+    const cls = ['wdot', c ? 'on' : '', i === todayOffset ? 'today' : '', i > todayOffset ? 'future' : ''].filter(Boolean).join(' ');
+    html += `<div><div class="wd">${DOW_SHORT[i]}</div><div class="${cls}" aria-label="${c ? 'đã ghi' : 'chưa ghi'}"></div></div>`;
+  }
+  document.getElementById('week').innerHTML = html;
+  const s = weekStats();
+  document.getElementById('weekStat').textContent = `Đã ghi ${s.days} ngày trong tuần này`;
+}
+
+function renderCalendar() {
+  const monthNames = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+  document.getElementById('calTitle').textContent = `${monthNames[viewMonth]}, ${viewYear}`;
+  const grid = document.getElementById('calGrid');
+  const heads = DOW_SHORT.map(h => `<div class="dow">${h}</div>`).join('');
+  const first = new Date(viewYear, viewMonth, 1);
+  const offset = (first.getDay() + 6) % 7;
+  const days = new Date(viewYear, viewMonth + 1, 0).getDate();
+  let cells = '';
+  for (let i = 0; i < offset; i++) cells += '<div class="day empty"></div>';
+  for (let d = 1; d <= days; d++) {
+    const key = `${viewYear}-${pad(viewMonth+1)}-${pad(d)}`;
+    const c = countOf(key);
+    const cls = ['day', c ? 'c'+c : '', key === todayKey ? 'today' : '', key > todayKey ? 'future' : '', key === selectedKey ? 'selected' : ''].filter(Boolean).join(' ');
+    const label = c ? `${c} win` : 'chưa ghi';
+    cells += `<button class="${cls}" data-key="${key}" aria-label="Ngày ${d}, ${label}"><span>${d}</span><span class="n">${c ? c : ''}</span></button>`;
+  }
+  grid.innerHTML = heads + cells;
+  grid.querySelectorAll('button.day').forEach(b => {
+    b.addEventListener('click', () => {
+      selectedKey = b.dataset.key;
+      editing = false;
+      renderCalendar();
+      renderPanel();
+      document.getElementById('dayPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  });
+}
+document.getElementById('prevBtn').addEventListener('click', () => {
+  viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+  renderCalendar();
+});
+document.getElementById('nextBtn').addEventListener('click', () => {
+  viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  renderCalendar();
+});
+
+function renderPanel() {
+  const panel = document.getElementById('dayPanel');
+  const [y, m, d] = selectedKey.split('-').map(Number);
+  const dt = new Date(y, m - 1, d);
+  const title = `${DOW[dt.getDay()]}, ${pad(d)}/${pad(m)}/${y}`;
+  const w = winsOf(selectedKey);
+  const hasAny = w.some(Boolean);
+
+  panel.innerHTML = '';
+  const eyebrow = document.createElement('p');
+  eyebrow.className = 'eyebrow';
+  eyebrow.textContent = 'Ngày đã chọn';
+  const heading = document.createElement('p');
+  heading.className = 'day-date';
+  heading.textContent = title;
+  panel.append(eyebrow, heading);
+
+  if (editing) {
+    const ol = document.createElement('ol');
+    [0,1,2].forEach(i => {
+      const li = document.createElement('li');
+      const num = document.createElement('div');
+      num.className = 'slot-num';
+      num.textContent = i + 1;
+      const inp = document.createElement('input');
+      inp.value = w[i];
+      inp.placeholder = `Win ${i+1}`;
+      inp.setAttribute('aria-label', `Win ${i+1} ngày ${d}`);
+      inp.addEventListener('input', e => {
+        const arr = winsOf(selectedKey);
+        arr[i] = e.target.value;
+        setWins(selectedKey, arr);
+        renderCalendar();
+        renderWeek();
+      });
+      li.append(num, inp);
+      ol.append(li);
+    });
+    panel.append(ol);
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.style.marginTop = 'var(--space-4)';
+    const done = document.createElement('button');
+    done.className = 'btn lime sm';
+    done.textContent = 'Lưu';
+    done.addEventListener('click', () => { editing = false; renderPanel(); renderToday(); });
+    row.append(done);
+    panel.append(row);
+  } else {
+    if (!hasAny) {
+      const p = document.createElement('p');
+      p.className = 'muted';
+      p.textContent = 'Chưa có win nào cho ngày này.';
+      panel.append(p);
+    } else {
+      const ol = document.createElement('ol');
+      w.forEach((t, i) => {
+        if (!t) return;
+        const li = document.createElement('li');
+        const num = document.createElement('div');
+        num.className = 'slot-num';
+        num.textContent = i + 1;
+        const txt = document.createElement('div');
+        txt.textContent = t;
+        li.append(num, txt);
+        ol.append(li);
+      });
+      panel.append(ol);
+    }
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.style.marginTop = 'var(--space-4)';
+    const edit = document.createElement('button');
+    edit.className = 'btn violet sm';
+    edit.textContent = 'Chỉnh sửa';
+    edit.addEventListener('click', () => { editing = true; renderPanel(); });
+    row.append(edit);
+    panel.append(row);
+  }
+}
+
+function renderHistory() {
+  renderWeek();
+  renderCalendar();
+  renderPanel();
+}
+
+/* Tab 3: Me */
+function renderPraise() {
+  const s = weekStats();
+  const el = document.getElementById('praise');
+  if (s.days === 0) {
+    el.textContent = 'Tuần này chưa có win nào. Một việc nhỏ hôm nay là đủ để bắt đầu.';
+  } else {
+    el.textContent = `Tuần này mình đã ghi ${s.days} ngày, với ${s.wins} việc đã làm được.`;
+  }
+  const total = totalWins();
+  document.getElementById('totalLine').textContent = total
+    ? `Từ khi bắt đầu, mình đã ghi ${total} việc đã làm được.`
+    : '';
+}
+function renderQuote() {
+  // Cùng một câu trong cả ngày, đổi sang câu khác vào ngày mới
+  const start = new Date(today.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((today - start) / 86400000);
+  const q = QUOTES[dayOfYear % QUOTES.length];
+  document.getElementById('quote').textContent = q.text;
+  document.getElementById('quoteBy').textContent = q.by ? `— ${q.by}` : '';
+}
+function renderEvidence() {
+  const pool = [];
+  Object.keys(data).forEach(k => winsOf(k).forEach(t => { if (t) pool.push({ key: k, text: t }); }));
+  const box = document.getElementById('evidence');
+  if (!pool.length) {
+    box.innerHTML = '<p class="muted" id="emptyEvidence"></p>';
+    document.getElementById('emptyEvidence').textContent = 'Win đầu tiên của mình sẽ xuất hiện ở đây.';
+    return;
+  }
+  const picks = [];
+  const used = new Set();
+  while (picks.length < Math.min(3, pool.length)) {
+    const i = Math.floor(Math.random() * pool.length);
+    if (!used.has(i)) { used.add(i); picks.push(pool[i]); }
+  }
+  box.innerHTML = picks.map(() => `<div class="evidence-item"><div class="evidence-date"></div><div class="evidence-text"></div></div>`).join('');
+  const dates = box.querySelectorAll('.evidence-date');
+  const texts = box.querySelectorAll('.evidence-text');
+  picks.forEach((p, i) => {
+    const [y, m, d] = p.key.split('-');
+    dates[i].textContent = `${d}/${m}/${y}`;
+    texts[i].textContent = p.text;
+  });
+}
+function renderMe() {
+  renderPraise();
+  renderQuote();
+  renderEvidence();
+}
+document.getElementById('shuffleBtn').addEventListener('click', renderEvidence);
+
+
+function renderAll() {
+  renderToday();
+  renderHistory();
+  renderMe();
+  showTab('today');
+}
+renderAll();
+</script>
+</body>
+</html>
